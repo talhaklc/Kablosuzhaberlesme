@@ -1,0 +1,42 @@
+#include <SPI.h>
+#include <nRF24L01p.h>
+#include <String.h>
+
+nRF24L01p verici(7,8);
+/* CSN - > 7, CE -> 8 olarak belirlendi */
+int gonder;
+boolean gonderimDurumu ;
+int butonPin=6;
+int butonDurum=0;
+void setup() {
+  Serial.begin(9600);
+  SPI.begin();
+  SPI.setBitOrder(MSBFIRST); // arduino ilk baþlarken çalýþýr spi bit haberleþme baþlatýr
+  /* SPI baþlatýldý */
+  verici.channel(90);
+  verici.TXaddress("Hasbi");
+  verici.init();
+  pinMode(butonPin,INPUT);
+  /* Verici ayarlarý yapýldý */
+}
+void loop() {
+  butonDurum=digitalRead(butonPin); // dijital olarak okuduk 
+  if(butonDurum==HIGH){
+    gonder=1;
+ verici.txPL(gonder); 
+  gonderimDurumu = verici.send(FAST);
+  }
+  else{
+     gonder=0;
+ verici.txPL(gonder); 
+    gonderimDurumu = verici.send(FAST);
+    }
+  
+  if(gonderimDurumu==true){
+        Serial.println("mesaji gonderildi");
+  }else{
+        Serial.println("mesaji gonderilemedi");
+  }
+  
+  delay(100); 
+}

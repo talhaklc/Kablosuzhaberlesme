@@ -1,0 +1,42 @@
+#include <SPI.h>
+#include <nRF24L01p.h>
+
+nRF24L01p alici(7,8);
+/* CSN - > 7, CE -> 8 olarak belirlendi */
+int ledPin=6;
+void setup(){
+  pinMode(ledPin,OUTPUT);
+  Serial.begin(9600);
+  SPI.begin();
+  SPI.setBitOrder(MSBFIRST);
+  /* SPI baþlatýldý */
+  alici.channel(90);
+  alici.RXaddress("Hasbi");
+  alici.init();
+  /* Alýcý ayarlarý yapýldý */
+}
+
+int alinandeger;
+
+void loop(){ 
+  while(alici.available()){
+    /* Modülden veri geldiði sürece while devam edecek */
+    alici.read();
+    alici.rxPL(alinandeger);
+    /* Modülden gelen veri okundu */
+    if(alinandeger==1)
+    {
+      digitalWrite(ledPin,HIGH);
+      /* modülden gelen veri ekrana yazdýrýldý */
+      
+      /* eski veri temizlendi */
+    }
+    else if(alinandeger==0)
+    digitalWrite(ledPin,LOW);
+    else
+    Serial.println("deger yok");
+    
+  }
+  
+  delay(100);
+}
